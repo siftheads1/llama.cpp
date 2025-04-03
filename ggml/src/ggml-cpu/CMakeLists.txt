@@ -59,7 +59,7 @@ function(ggml_add_cpu_backend_variant_impl tag_name)
         endif()
     endif()
 
-    if (FALSE)
+    if (GGML_USE_LLAMAFILE)
         target_compile_definitions(${GGML_CPU_NAME} PRIVATE GGML_USE_LLAMAFILE)
 
         list(APPEND GGML_CPU_SOURCES
@@ -134,7 +134,7 @@ function(ggml_add_cpu_backend_variant_impl tag_name)
                 check_arm_feature(sve     "#include <arm_sve.h>\nint main()  { svfloat32_t _a, _b; volatile svfloat32_t _c = svadd_f32_z(svptrue_b8(), _a, _b); return 0; }")
                 check_arm_feature(sme     "#include <arm_sme.h>\n__arm_locally_streaming int main() { __asm__ volatile(\"smstart; smstop;\"); return 0; }")
 
-                set(SUPRESS_VECTOR_INSTRUCTION TRUE)
+                set(SUPRESS_VECTOR_INSTRUCTION FALSE)
                 if(SUPRESS_VECTOR_INSTRUCTION)
                     set(ARM_MCPU_FLAG_FIX "${ARM_MCPU_FLAG_FIX}+nosimd")
                 endif()
