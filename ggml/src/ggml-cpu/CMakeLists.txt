@@ -59,15 +59,12 @@ function(ggml_add_cpu_backend_variant_impl tag_name)
         endif()
     endif()
 
-    set(SKIP_TINYBLAS_COMPILE TRUE)
-    if(SKIP_TINYBLAS_COMPILE)
-        if (GGML_LLAMAFILE)
-            target_compile_definitions(${GGML_CPU_NAME} PRIVATE GGML_USE_LLAMAFILE)
+    if (GGML_LLAMAFILE)
+        target_compile_definitions(${GGML_CPU_NAME} PRIVATE GGML_USE_LLAMAFILE)
 
-            list(APPEND GGML_CPU_SOURCES
-                        ggml-cpu/llamafile/sgemm.cpp
-                        ggml-cpu/llamafile/sgemm.h)
-        endif()
+        list(APPEND GGML_CPU_SOURCES
+                    ggml-cpu/llamafile/sgemm.cpp
+                    ggml-cpu/llamafile/sgemm.h)
     endif()
 
     if (GGML_CPU_HBM)
