@@ -59,7 +59,7 @@ function(ggml_add_cpu_backend_variant_impl tag_name)
         endif()
     endif()
 
-    if (GGML_LLAMAFILE)
+    if (FALSE)
         target_compile_definitions(${GGML_CPU_NAME} PRIVATE GGML_USE_LLAMAFILE)
 
         list(APPEND GGML_CPU_SOURCES
