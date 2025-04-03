@@ -405,7 +405,7 @@ typedef uint8_t  uint8x16_t __attribute__((vector_size(16)));
 typedef uint16_t uint16x8_t __attribute__((vector_size(16)));
 typedef uint32_t uint32x4_t __attribute__((vector_size(16)));
 
-// typedef float float32x4_t __attribute__((vector_size(16)));
+typedef float float32x4_t __attribute__((vector_size(16)));
 typedef double double64x2_t __attribute((vector_size(16)));
 
 typedef signed long long long64x2_t __attribute((vector_size(16)));
