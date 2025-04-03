@@ -1,6 +1,8 @@
 include(CheckCXXCompilerFlag)
 include("../cmake/common.cmake")
 
+list(APPEND C_FLAGS -save-temps)
+
 add_compile_definitions(GGML_SCHED_MAX_COPIES=${GGML_SCHED_MAX_COPIES})
 
 # enable libstdc++ assertions for debug builds
