@@ -1603,7 +1603,7 @@ static void ggml_vec_dot_f16(int n, float * GGML_RESTRICT s, size_t bs, ggml_fp1
     GGML_F16_VEC_REDUCE(sumf, sum);
 
     // leftovers
-    asm volatile("# leftover loop")
+    asm volatile("# leftover loop");
     for (int i = np; i < n; ++i) {
         sumf += (ggml_float)(GGML_FP16_TO_FP32(x[i])*GGML_FP16_TO_FP32(y[i]));
     }
