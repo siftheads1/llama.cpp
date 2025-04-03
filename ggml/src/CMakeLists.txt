@@ -1,7 +1,12 @@
 include(CheckCXXCompilerFlag)
 include("../cmake/common.cmake")
 
+# (@wonjun) Output assembly code for source files in GGML directory
 list(APPEND C_FLAGS -save-temps)
+# (@wonjun) Disable fused multiply-add instructions altogether
+# WARNING: This may disable FMA instructions that are not vector instructions, which may result in incorrect profiling
+list(APPEND C_FLAGS -ffp-contract=off)
+list(APPEND CXX_FLAGS -ffp-contract=off)
 
 add_compile_definitions(GGML_SCHED_MAX_COPIES=${GGML_SCHED_MAX_COPIES})
 
