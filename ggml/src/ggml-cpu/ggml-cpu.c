@@ -1471,17 +1471,21 @@ static void ggml_vec_dot_f32(int n, float * GGML_RESTRICT s, size_t bs, const fl
 
     for (int i = 0; i < np; i += GGML_F32_STEP) {
         for (int j = 0; j < GGML_F32_ARR; j++) {
+            asm volatile("# Inner loop load");
             ax[j] = GGML_F32_VEC_LOAD(x + i + j*GGML_F32_EPR);
             ay[j] = GGML_F32_VEC_LOAD(y + i + j*GGML_F32_EPR);
 
+            asm volatile("# Inner loop FMA");
             sum[j] = GGML_F32_VEC_FMA(sum[j], ax[j], ay[j]);
         }
     }
 
     // reduce sum0..sum3 to sum0
+    asm volatile("# VEC REDUCE");
     GGML_F32_VEC_REDUCE(sumf, sum);
 
     // leftovers
+    asm volatile("# leftover loop");
     for (int i = np; i < n; ++i) {
         sumf += x[i]*y[i];
     }
@@ -1585,17 +1589,21 @@ static void ggml_vec_dot_f16(int n, float * GGML_RESTRICT s, size_t bs, ggml_fp1
 
     for (int i = 0; i < np; i += GGML_F16_STEP) {
         for (int j = 0; j < GGML_F16_ARR; j++) {
+            asm volatile("# VEC LOAD");
             ax[j] = GGML_F16_VEC_LOAD(x + i + j*GGML_F16_EPR, j);
             ay[j] = GGML_F16_VEC_LOAD(y + i + j*GGML_F16_EPR, j);
 
+            asm volatile("# VEC FMA");
             sum[j] = GGML_F16_VEC_FMA(sum[j], ax[j], ay[j]);
         }
     }
 
     // reduce sum0..sum3 to sum0
+    asm volatile("# VEC REDUCE");
     GGML_F16_VEC_REDUCE(sumf, sum);
 
     // leftovers
+    asm volatile("# leftover loop")
     for (int i = np; i < n; ++i) {
         sumf += (ggml_float)(GGML_FP16_TO_FP32(x[i])*GGML_FP16_TO_FP32(y[i]));
     }
