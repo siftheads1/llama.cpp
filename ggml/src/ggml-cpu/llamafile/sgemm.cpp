@@ -50,7 +50,7 @@
 
 #include "sgemm.h"
 #include "ggml-impl.h"
-// #include "ggml-cpu-impl.h"
+#include "ggml-cpu-impl.h"
 #include "ggml-quants.h"
 
 #include <atomic>
