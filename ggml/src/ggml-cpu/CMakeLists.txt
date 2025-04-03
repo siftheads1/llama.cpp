@@ -135,6 +135,8 @@ function(ggml_add_cpu_backend_variant_impl tag_name)
                 check_arm_feature(sme     "#include <arm_sme.h>\n__arm_locally_streaming int main() { __asm__ volatile(\"smstart; smstop;\"); return 0; }")
 
                 list(APPEND ARCH_FLAGS "${ARM_MCPU_FLAG}${ARM_MCPU_FLAG_FIX}")
+                message("Original flag: ${ARM_MCPU_FLAG}")
+                message("Additional flag: ${ARM_MCPU_FLAG_FIX}")
             else()
                 if (GGML_CPU_ARM_ARCH)
                     list(APPEND ARCH_FLAGS -march=${GGML_CPU_ARM_ARCH})
