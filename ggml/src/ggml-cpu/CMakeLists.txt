@@ -136,7 +136,7 @@ function(ggml_add_cpu_backend_variant_impl tag_name)
 
                 set(SUPRESS_VECTOR_INSTRUCTION TRUE)
                 if(SUPRESS_VECTOR_INSTRUCTION)
-                    set(ARM_MCPU_FLAG_FIX "${ARM_MCPU_FLAG_FIX}+nosimd+nofma")
+                    set(ARM_MCPU_FLAG_FIX "${ARM_MCPU_FLAG_FIX}+nosimd")
                 endif()
                 list(APPEND ARCH_FLAGS "${ARM_MCPU_FLAG}${ARM_MCPU_FLAG_FIX}")
                 message("Arch flags: ${ARCH_FLAGS}")
