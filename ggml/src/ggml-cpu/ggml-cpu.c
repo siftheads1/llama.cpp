@@ -1597,12 +1597,14 @@ static void ggml_vec_dot_f16(int n, float * GGML_RESTRICT s, size_t bs, ggml_fp1
 
             asm volatile("# VEC FMA");
             sum[j] = GGML_F16_VEC_FMA(sum[j], ax[j], ay[j]);
+            asm volatile("# VEC FMA END");
         }
     }
 
     // reduce sum0..sum3 to sum0
     asm volatile("# VEC REDUCE");
     GGML_F16_VEC_REDUCE(sumf, sum);
+    asm volatile("# VEC REDUCE END");
 
     // leftovers
     asm volatile("# leftover loop");
