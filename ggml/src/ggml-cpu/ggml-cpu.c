@@ -1564,7 +1564,7 @@ static void ggml_vec_dot_bf16(int n, float * GGML_RESTRICT s, size_t bs, ggml_bf
 
 #undef LOAD
 #endif
-    asm volatile("Non-vectorized");
+    asm volatile("# Non-vectorized");
     for (; i < n; ++i) {
         sumf += (ggml_float)(GGML_BF16_TO_FP32(x[i]) *
                              GGML_BF16_TO_FP32(y[i]));
