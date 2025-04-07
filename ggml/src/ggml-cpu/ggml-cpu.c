@@ -1514,6 +1514,7 @@ static void ggml_vec_dot_bf16(int n, float * GGML_RESTRICT s, size_t bs, ggml_bf
     ggml_float sumf = 0;
 
 #if defined(__AVX512BF16__)
+    asm volatile("# AVX512BF16");
     __m512 c1 = _mm512_setzero_ps();
     __m512 c2 = _mm512_setzero_ps();
     for (; i + 64 <= n; i += 64) {
@@ -1526,6 +1527,7 @@ static void ggml_vec_dot_bf16(int n, float * GGML_RESTRICT s, size_t bs, ggml_bf
     sumf += (ggml_float)_mm512_reduce_add_ps(c2);
 
 #elif defined(__AVX512F__)
+asm volatile("# AVX512F");
 #define LOAD(p) _mm512_castsi512_ps(_mm512_slli_epi32(_mm512_cvtepu16_epi32(_mm256_loadu_si256((const __m256i *)(p))), 16))
     __m512 c1 = _mm512_setzero_ps();
     __m512 c2 = _mm512_setzero_ps();
@@ -1538,6 +1540,7 @@ static void ggml_vec_dot_bf16(int n, float * GGML_RESTRICT s, size_t bs, ggml_bf
 
 #undef LOAD
 #elif defined(__AVX2__) || defined(__AVX__)
+asm volatile("# AVX");
 #if defined(__AVX2__)
 #define LOAD(p) _mm256_castsi256_ps(_mm256_slli_epi32(_mm256_cvtepu16_epi32(_mm_loadu_si128((const __m128i *)(p))), 16))
 #else
