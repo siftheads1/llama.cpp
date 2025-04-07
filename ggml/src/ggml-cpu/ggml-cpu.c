@@ -1513,6 +1513,8 @@ static void ggml_vec_dot_bf16(int n, float * GGML_RESTRICT s, size_t bs, ggml_bf
     int i = 0;
     ggml_float sumf = 0;
 
+    printf("[ggml-cpu.c] Uses vec_dot_bf16\n");
+
 #if defined(__AVX512BF16__)
     __m512 c1 = _mm512_setzero_ps();
     __m512 c2 = _mm512_setzero_ps();
@@ -1566,8 +1568,10 @@ static void ggml_vec_dot_bf16(int n, float * GGML_RESTRICT s, size_t bs, ggml_bf
 #endif
     asm volatile("# Non-vectorized");
     for (; i < n; ++i) {
+        asm volatile("# loop body");
         sumf += (ggml_float)(GGML_BF16_TO_FP32(x[i]) *
                              GGML_BF16_TO_FP32(y[i]));
+        asm volatile("# loop body end");
     }
     *s = sumf;
 }
