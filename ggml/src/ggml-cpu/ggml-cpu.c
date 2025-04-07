@@ -1609,7 +1609,9 @@ static void ggml_vec_dot_f16(int n, float * GGML_RESTRICT s, size_t bs, ggml_fp1
     }
 #else
     for (int i = 0; i < n; ++i) {
+        asm volatile("# loop body");
         sumf += (ggml_float)(GGML_FP16_TO_FP32(x[i])*GGML_FP16_TO_FP32(y[i]));
+        asm volatile("# loop body end");
     }
 #endif
 
