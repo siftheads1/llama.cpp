@@ -1487,7 +1487,9 @@ static void ggml_vec_dot_f32(int n, float * GGML_RESTRICT s, size_t bs, const fl
     // leftovers
     asm volatile("# leftover loop");
     for (int i = np; i < n; ++i) {
+        asm volatile("# leftover loop body");
         sumf += x[i]*y[i];
+        asm volatile("# leftover loop body end");
     }
 #else
     // scalar
@@ -1562,7 +1564,7 @@ static void ggml_vec_dot_bf16(int n, float * GGML_RESTRICT s, size_t bs, ggml_bf
 
 #undef LOAD
 #endif
-
+    asm volatile("Non-vectorized");
     for (; i < n; ++i) {
         sumf += (ggml_float)(GGML_BF16_TO_FP32(x[i]) *
                              GGML_BF16_TO_FP32(y[i]));
@@ -1605,7 +1607,9 @@ static void ggml_vec_dot_f16(int n, float * GGML_RESTRICT s, size_t bs, ggml_fp1
     // leftovers
     asm volatile("# leftover loop");
     for (int i = np; i < n; ++i) {
+        asm volatile("# leftover loop body");
         sumf += (ggml_float)(GGML_FP16_TO_FP32(x[i])*GGML_FP16_TO_FP32(y[i]));
+        asm volatile("# leftover loop body end");
     }
 #else
     for (int i = 0; i < n; ++i) {
