@@ -1471,25 +1471,25 @@ static void ggml_vec_dot_f32(int n, float * GGML_RESTRICT s, size_t bs, const fl
 
     for (int i = 0; i < np; i += GGML_F32_STEP) {
         for (int j = 0; j < GGML_F32_ARR; j++) {
-            asm volatile("# Inner loop load");
+            // asm volatile("# Inner loop load");
             ax[j] = GGML_F32_VEC_LOAD(x + i + j*GGML_F32_EPR);
             ay[j] = GGML_F32_VEC_LOAD(y + i + j*GGML_F32_EPR);
 
-            asm volatile("# Inner loop FMA");
+            // asm volatile("# Inner loop FMA");
             sum[j] = GGML_F32_VEC_FMA(sum[j], ax[j], ay[j]);
         }
     }
 
     // reduce sum0..sum3 to sum0
-    asm volatile("# VEC REDUCE");
+    // asm volatile("# VEC REDUCE");
     GGML_F32_VEC_REDUCE(sumf, sum);
 
     // leftovers
-    asm volatile("# leftover loop");
+    // asm volatile("# leftover loop");
     for (int i = np; i < n; ++i) {
-        asm volatile("# leftover loop body");
+        // asm volatile("# leftover loop body");
         sumf += x[i]*y[i];
-        asm volatile("# leftover loop body end");
+        // asm volatile("# leftover loop body end");
     }
 #else
     // scalar
@@ -1581,6 +1581,8 @@ static void ggml_vec_dot_f16(int n, float * GGML_RESTRICT s, size_t bs, ggml_fp1
 
     ggml_float sumf = 0.0;
 
+    printf("f16 vec dot\n");
+
 #if defined(GGML_SIMD)
     const int np = (n & ~(GGML_F16_STEP - 1));
 
@@ -1591,33 +1593,33 @@ static void ggml_vec_dot_f16(int n, float * GGML_RESTRICT s, size_t bs, ggml_fp1
 
     for (int i = 0; i < np; i += GGML_F16_STEP) {
         for (int j = 0; j < GGML_F16_ARR; j++) {
-            asm volatile("# VEC LOAD");
+            // asm volatile("# VEC LOAD");
             ax[j] = GGML_F16_VEC_LOAD(x + i + j*GGML_F16_EPR, j);
             ay[j] = GGML_F16_VEC_LOAD(y + i + j*GGML_F16_EPR, j);
 
-            asm volatile("# VEC FMA");
+            // asm volatile("# VEC FMA");
             sum[j] = GGML_F16_VEC_FMA(sum[j], ax[j], ay[j]);
-            asm volatile("# VEC FMA END");
+            // asm volatile("# VEC FMA END");
         }
     }
 
     // reduce sum0..sum3 to sum0
-    asm volatile("# VEC REDUCE");
+    // asm volatile("# VEC REDUCE");
     GGML_F16_VEC_REDUCE(sumf, sum);
-    asm volatile("# VEC REDUCE END");
+    // asm volatile("# VEC REDUCE END");
 
     // leftovers
-    asm volatile("# leftover loop");
+    // asm volatile("# leftover loop");
     for (int i = np; i < n; ++i) {
-        asm volatile("# leftover loop body");
+        // asm volatile("# leftover loop body");
         sumf += (ggml_float)(GGML_FP16_TO_FP32(x[i])*GGML_FP16_TO_FP32(y[i]));
-        asm volatile("# leftover loop body end");
+        // asm volatile("# leftover loop body end");
     }
 #else
     for (int i = 0; i < n; ++i) {
-        asm volatile("# loop body");
+        // asm volatile("# loop body");
         sumf += (ggml_float)(GGML_FP16_TO_FP32(x[i])*GGML_FP16_TO_FP32(y[i]));
-        asm volatile("# loop body end");
+        // asm volatile("# loop body end");
     }
 #endif
 
