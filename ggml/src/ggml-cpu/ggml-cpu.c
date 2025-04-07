@@ -1581,8 +1581,6 @@ static void ggml_vec_dot_f16(int n, float * GGML_RESTRICT s, size_t bs, ggml_fp1
 
     ggml_float sumf = 0.0;
 
-    printf("f16 vec dot\n");
-
 #if defined(GGML_SIMD)
     const int np = (n & ~(GGML_F16_STEP - 1));
 
