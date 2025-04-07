@@ -1495,9 +1495,7 @@ static void ggml_vec_dot_f32(int n, float * GGML_RESTRICT s, size_t bs, const fl
     // scalar
     ggml_float sumf = 0.0;
     for (int i = 0; i < n; ++i) {
-        asm volatile("# Loop body");
         sumf += (ggml_float)(x[i]*y[i]);
-        asm volatile("# Loop body end");
     }
 #endif
 
