@@ -1513,8 +1513,6 @@ static void ggml_vec_dot_bf16(int n, float * GGML_RESTRICT s, size_t bs, ggml_bf
     int i = 0;
     ggml_float sumf = 0;
 
-    printf("[ggml-cpu.c] Uses vec_dot_bf16\n");
-
 #if defined(__AVX512BF16__)
     __m512 c1 = _mm512_setzero_ps();
     __m512 c2 = _mm512_setzero_ps();
