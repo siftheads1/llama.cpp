@@ -96,7 +96,7 @@ typedef double ggml_float;
 #define GGML_GELU_QUICK_FP16
 
 #define GGML_SOFT_MAX_UNROLL 4
-#define GGML_VEC_DOT_UNROLL  4
+#define GGML_VEC_DOT_UNROLL  2
 #define GGML_VEC_MAD_UNROLL  32
 
 //
