@@ -1,6 +1,8 @@
 #define _CRT_SECURE_NO_DEPRECATE // Disables "unsafe" warnings on Windows
 #define _USE_MATH_DEFINES // For M_PI on MSVC
 
+#define LOG_OP_TIMES 1
+
 #include "ggml-backend-impl.h"
 #include "ggml-backend.h"
 #include "ggml-cpu-traits.h"
@@ -13510,7 +13512,13 @@ static thread_ret_t ggml_graph_compute_thread(void * data) {
     for (int node_n = 0; node_n < cgraph->n_nodes && atomic_load_explicit(&tp->abort, memory_order_relaxed) != node_n; node_n++) {
         struct ggml_tensor * node = cgraph->nodes[node_n];
 
-        ggml_compute_forward(&params, node);
+        #if LOG_OP_TIMES
+            double start_time = omp_get_wtime();
+            ggml_compute_forward(&params, node);
+            double end_time = omp_get_wtime();
+        #else
+            ggml_compute_forward(&params, node);
+        #endif
 
         if (state->ith == 0 && cplan->abort_callback &&
                 cplan->abort_callback(cplan->abort_callback_data)) {
@@ -13518,9 +13526,39 @@ static thread_ret_t ggml_graph_compute_thread(void * data) {
             tp->ec    = GGML_STATUS_ABORTED;
         }
 
-        if (node_n + 1 < cgraph->n_nodes) {
-            ggml_barrier(state->threadpool);
-        }
+        #if LOG_OP_TIMES
+            double sync_start_time = 0.0;
+            double sync_end_time = 0.0;
+            if (node_n + 1 < cgraph->n_nodes) {
+                sync_start_time = omp_get_wtime();
+                ggml_barrier(state->threadpool);
+                sync_end_time = omp_get_wtime();
+            }
+        #else
+            if (node_n + 1 < cgraph->n_nodes) {
+                ggml_barrier(state->threadpool);
+            }
+        #endif
+
+        #if LOG_OP_TIMES
+            double compute_duration = end_time - start_time;
+            double sync_duration = sync_end_time - sync_start_time;
+
+            #pragma omp critical
+            {
+            printf("=======================================\n");
+            printf("%s\n", node->name);
+            printf("%s\n", ggml_op_to_string(node->op));
+            //printf("%dth thread among %d threads\n", state->ith, state->shared->n_threads);
+            printf("thread_idx: %d\n", state->ith);
+            // printf("current_core = %d\n", cpu);
+            printf("compute_duration: %f ms\n", compute_duration);
+            printf("sync_duration: %f ms\n", sync_duration);
+            printf("sum_of_duration: %f ms\n", compute_duration + sync_duration);
+            printf("\n");
+            printf("=======================================\n\n");
+            }
+        #endif
     }
 
     ggml_barrier(state->threadpool);
