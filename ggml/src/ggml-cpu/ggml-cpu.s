@@ -48,12 +48,12 @@ ggml_vec_dot_f32:                       // @ggml_vec_dot_f32
 	ldp	s3, s4, [x11, #-4]
 	add	x11, x11, #8
 	subs	x12, x12, #2
-	nop
+	fmul	s2, s2, s4
 	fmul	s1, s1, s3
 	fcvt	d2, s2
 	fcvt	d1, s1
-	fadd	d0, d0, d1
-	fadd	d0, d0, d2
+	nop
+	nop
 	b.ne	.LBB1_5
 // %bb.6:                               // %middle.block
 	cmp	x9, x8
